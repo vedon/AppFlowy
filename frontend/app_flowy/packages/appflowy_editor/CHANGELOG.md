@@ -1,3 +1,8 @@
+## 0.0.8
+* Fix the toolbar display issue.
+* Fix the copy/paste issue on Windows.
+* Minor Updates.
+
 ## 0.0.7
 * Refactor theme customizer, and support dark mode.
 * Support export and import markdown.
