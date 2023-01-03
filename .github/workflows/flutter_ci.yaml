@@ -1,22 +1,17 @@
 name: Flutter-CI
+on:
+  push:
+    branches:
+      - "main"
+      - "release/*"
 
-#on:
-#  push:
-#    branches:
-#      - "main"
-#      - "release/*"
-#    paths:
-#      - "frontend/**"
-#
-#  pull_request:
-#    branches:
-#      - "main"
-#      - "release/*"
-#    paths:
-#      - "frontend/**"
+  pull_request:
+    branches:
+      - "main"
+      - "release/*"
 
 env:
-  FLUTTER_VERSION: "3.0.5"
+  FLUTTER_VERSION: "3.3.9"
   RUST_TOOLCHAIN: "1.65"
 
 jobs:
