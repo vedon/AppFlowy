@@ -85,7 +85,7 @@ jobs:
           cargo make --env APP_VERSION=${{ github.ref_name }} --profile production-windows-x86 appflowy
 
       - name: Archive Asset
-      - uses: vimtor/action-zip@v1
+        uses: vimtor/action-zip@v1
         with:
           files: ${{ env.WINDOWS_APP_RELEASE_PATH }}\
           dest: ${{ env.WINDOWS_APP_RELEASE_PATH }}\${{ env.WINDOWS_ZIP_NAME }}

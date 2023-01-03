@@ -21,9 +21,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-latest, extra-build-args: "", }
-          - { os: macos-latest, extra-build-args: "", }
-          - { os: windows-latest, extra-build-args: "", }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest,}
+          - { target: x86_64-apple-darwin, os: macos-latest, }
+          - { target: x86_64-pc-windows-msvc, os: windows-latest, }
         include:
           - os: ubuntu-latest
             flutter_profile: development-linux-x86_64
