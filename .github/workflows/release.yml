@@ -84,9 +84,11 @@ jobs:
           flutter config --enable-windows-desktop
           cargo make --env APP_VERSION=${{ github.ref_name }} --profile production-windows-x86 appflowy
 
-      - uses: montudor/action-zip@v1
+      - name: Archive Asset
+      - uses: vimtor/action-zip@v1
         with:
-          args: zip -qq -r ${{ env.WINDOWS_APP_RELEASE_PATH }}\${{ env.WINDOWS_ZIP_NAME }} ${{ env.WINDOWS_APP_RELEASE_PATH }}
+          files: ${{ env.WINDOWS_APP_RELEASE_PATH }}\
+          dest: ${{ env.WINDOWS_APP_RELEASE_PATH }}\${{ env.WINDOWS_ZIP_NAME }}
 
       - name: Copy installer config & icon file
         working-directory: frontend
@@ -183,7 +185,7 @@ jobs:
           "${{ env.MACOS_APP_RELEASE_PATH }}/${{ env.MACOS_DMG_NAME }}.dmg" \
           "${{ env.MACOS_APP_RELEASE_PATH }}/AppFlowy.app"
 
-      - name: Archive macOS app
+      - name: Archive Asset
         working-directory: ${{ env.MACOS_APP_RELEASE_PATH }}
         run: zip --symlinks -qr ${{ env.MACOS_X86_ZIP_NAME }} AppFlowy.app
 
@@ -262,7 +264,7 @@ jobs:
           flutter config --enable-linux-desktop
           cargo make --env APP_VERSION=${{ github.ref_name }} --profile production-linux-x86_64 appflowy
 
-      - name: Archive AppFlowy
+      - name: Archive Assert
         working-directory: ${{ env.LINUX_APP_RELEASE_PATH }}
         run: tar -czf ${{ env.LINUX_ZIP_NAME }} *
 
