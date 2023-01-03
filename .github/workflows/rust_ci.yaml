@@ -1,21 +1,5 @@
 name: Rust-CI
 
-on:
-  push:
-    branches:
-      - "main"
-      - "release/*"
-    paths:
-      - "frontend/rust-lib/**"
-      - "shared-lib/**"
-
-  pull_request:
-    branches:
-      - "main"
-      - "release/*"
-    paths:
-      - "frontend/rust-lib/**"
-      - "shared-lib/**"
 
 env:
   CARGO_TERM_COLOR: always
