@@ -11,11 +11,19 @@ on:
       - "main"
       - "release/*"
 
+env:
+  FLUTTER_VERSION: "3.0.5"
+  RUST_TOOLCHAIN: "1.65"
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        job:
+          - { os: ubuntu-latest, extra-build-args: "", }
+          - { os: macos-latest, extra-build-args: "", }
+          - { os: windows-latest, extra-build-args: "", }
         include:
           - os: ubuntu-latest
             flutter_profile: development-linux-x86_64
@@ -26,38 +34,36 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout source code
+        uses: actions/checkout@v2
 
-      - id: rust_toolchain
+      - name: Install Rust toolchain
+        id: rust_toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: "stable-2022-04-07"
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          target: ${{ matrix.job.target }}
+          override: true
+          components: rustfmt
+          profile: minimal
 
-      - id: flutter
+      - name: Install flutter
+        id: flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-          flutter-version: "3.0.5"
 
-      - name: Cache Cargo
-        id: cache-cargo
-        uses: actions/cache@v2
+      - uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo
-          key: ${{ runner.os }}-cargo-${{ steps.rust_toolchain.outputs.rustc_hash }}-${{ hashFiles('./frontend/rust-lib/Cargo.toml') }}
+          prefix-key: ${{ matrix.job.os }}
 
-      - name: Cache Rust
-        uses: actions/cache@v2
-        with:
-          path: |
-            frontend/rust-lib/target
-            shared-lib/target
-          key: ${{ runner.os }}-rust-rust-lib-share-lib-${{ steps.rust_toolchain.outputs.rustc_hash }}-${{ hashFiles('./frontend/rust-lib/Cargo.toml') }}
-
-      - name: Setup Environment
+      - name: Install prerequisites
+        working-directory: frontend
         run: |
+          cargo install --force cargo-make
+          cargo install --force duckscript_cli
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo wget -qO /etc/apt/trusted.gpg.d/dart_linux_signing_key.asc https://dl-ssl.google.com/linux/linux_signing_key.pub
             sudo wget -qO /etc/apt/sources.list.d/dart_stable.list https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list
@@ -71,19 +77,7 @@ jobs:
           fi
         shell: bash
 
-      - if: steps.cache-cargo.outputs.cache-hit != 'true'
-        name: Deps
-        working-directory: frontend
-        run: |
-          cargo install cargo-make
-          cargo install duckscript_cli
-
-      - name: Cargo make appflowy-deps-tools
-        working-directory: frontend
-        run: |
-          cargo make appflowy-deps-tools
-
-      - name: Config Flutter
+      - name: Enable Flutter Desktop
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             flutter config --enable-linux-desktop
@@ -94,7 +88,22 @@ jobs:
           fi
         shell: bash
 
-      - name: Build
+      - name: Build AppFlowy
         working-directory: frontend
         run: |
           cargo make --profile ${{ matrix.flutter_profile }} appflowy-dev
+
+      - name: Flutter Analyzer
+        working-directory: frontend/app_flowy
+        run: flutter analyze
+
+      - name: Build Flutter unit test lib
+        working-directory: frontend
+        run: |
+          cargo make build-test-lib
+
+      - name: Run Flutter unit test
+        working-directory: frontend/app_flowy
+        run: |
+          flutter pub get
+          flutter test
