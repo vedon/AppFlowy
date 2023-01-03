@@ -7,6 +7,7 @@ on:
 
 env:
   FLUTTER_VERSION: "3.0.5"
+  RUST_TOOLCHAIN: 'stable-2022-11-02'
 
 jobs:
   create-release:
@@ -61,11 +62,11 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: 'stable-2022-04-07'
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           target: ${{ matrix.job.target }}
           override: true
           components: rustfmt
-          profile: minimal # minimal component installation (ie, no documentation)
+          profile: minimal
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -146,10 +147,11 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           target: ${{ matrix.job.target }}
           override: true
-          profile: minimal # minimal component installation (ie, no documentation)
+          components: rustfmt
+          profile: minimal
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -233,10 +235,11 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
           target: ${{ matrix.job.target }}
           override: true
-          profile: minimal # minimal component installation (ie, no documentation)
+          components: rustfmt
+          profile: minimal
 
       - uses: Swatinem/rust-cache@v2
         with:
