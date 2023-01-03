@@ -263,7 +263,7 @@ jobs:
           cargo make --env APP_VERSION=${{ github.ref_name }} --profile production-linux-x86_64 appflowy
 
       - name: Archive AppFlowy
-        working-directory: ${{ env.MACOS_APP_RELEASE_PATH }}
+        working-directory: ${{ env.LINUX_APP_RELEASE_PATH }}
         run: zip --symlinks -qr ${{ env.LINUX_ZIP_NAME }} AppFlowy.app
 
       - name: Configuring Linux Package
