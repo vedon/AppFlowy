@@ -1,13 +1,14 @@
 name: Rust code coverage
 
-on:
-  push:
-    branches:
-      - "main"
-      - "release/*"
-    paths:
-      - "frontend/rust-lib/**"
-      - "shared-lib/**"
+on: [pull_request, push]
+#on:
+#  push:
+#    branches:
+#      - "main"
+#      - "release/*"
+#    paths:
+#      - "frontend/rust-lib/**"
+#      - "shared-lib/**"
 
 env:
   CARGO_TERM_COLOR: always

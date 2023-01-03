@@ -129,7 +129,7 @@ jobs:
     env:
       MACOS_APP_RELEASE_PATH: frontend/app_flowy/product/${{ github.ref_name }}/macos/Release
       MACOS_X86_ZIP_NAME: AppFlowy_${{ github.ref_name }}_macos-x86_64.zip
-      MACOS_DMG_NAME: AppFlowy_${{ github.ref_name }}_macos-x86_64-installer
+      MACOS_DMG_NAME: AppFlowy_${{ github.ref_name }}_macos-x86_64
     strategy:
       fail-fast: false
       matrix:
@@ -216,7 +216,7 @@ jobs:
     env:
       LINUX_APP_RELEASE_PATH: frontend/app_flowy/product/${{ github.ref_name }}/linux/Release
       LINUX_ZIP_NAME: AppFlowy_${{ matrix.job.target }}_${{ matrix.job.os }}.tar.gz
-      LINUX_PACKAGE_NAME: AppFlowy_${{ github.ref_name }}_${{ matrix.job.target }}_${{ matrix.job.os }}.deb
+      LINUX_PACKAGE_NAME: AppFlowy_${{ github.ref_name }}_${{ matrix.job.os }}.deb
     strategy:
       fail-fast: false
       matrix:
