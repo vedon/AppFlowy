@@ -71,12 +71,11 @@ jobs:
         with:
           prefix-key: ${{ matrix.job.os }}
 
-      - name: Pre build
-          working-directory: frontend
-          run: |
-            cargo install --force cargo-make
-            cargo install --force duckscript_cli
-
+      - name: Install prerequisites
+        working-directory: frontend
+        run: |
+          cargo install --force cargo-make
+          cargo install --force duckscript_cli
 
       - name: Build Windows app
         working-directory: frontend
