@@ -14,7 +14,7 @@ run_task = { name = ["code_generation", "set-app-version", "flutter-build", "cop
 
 [tasks.appflowy-linux]
 dependencies = ["appflowy-sdk-release"]
-run_task = { name = ["code_generation", "set-app-version", "flutter-build", "copy-to-product", "create-release-archive"] }
+run_task = { name = ["code_generation", "set-app-version", "flutter-build", "copy-to-product"] }
 script_runner = "@shell"
 
 [tasks.appflowy-dev]
@@ -106,34 +106,6 @@ script = [
   """,
 ]
 script_runner = "@duckscript"
-
-# The following tasks will create an archive that will be used on the GitHub Releases section
-# The archives are created using different compression programs depending on the target OS
-# The archive will be composed of all files that are located in the /Release/AppFlowy directory
-[tasks.create-release-archive]
-mac_alias = "create-release-archive-macos"
-windows_alias = "create-release-archive-windows"
-linux_alias = "create-release-archive-linux"
-
-[tasks.create-release-archive-linux]
-script = [
-  "cd ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/app_flowy/product/${APP_VERSION}/${TARGET_OS}/Release",
-  "tar -czf ${PRODUCT_NAME}-${TARGET_OS}-x86.tar.gz *"
-]
-
-[tasks.create-release-archive-windows]
-script = [
-  # TODO
-  # "cd ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/app_flowy/product/${VERSION}/${TARGET_OS}/Release/${PRODUCT_NAME}",
-  # "tar -czf ${PRODUCT_NAME}-${TARGET_OS}-x86.tar.gz *"
-]
-
-[tasks.create-release-archive-macos]
-script = [
-  # TODO 
-  # "cd ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/app_flowy/product/${VERSION}/${TARGET_OS}/Release/${PRODUCT_NAME}",
-  # "tar -czf ${PRODUCT_NAME}-${TARGET_OS}-x86.tar.gz *"
-]
 
 [tasks.flutter-build]
 script = [

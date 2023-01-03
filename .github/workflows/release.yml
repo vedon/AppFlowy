@@ -195,6 +195,7 @@ jobs:
           asset_path: ${{ env.MACOS_APP_RELEASE_PATH }}/${{ env.MACOS_X86_ZIP_NAME }}
           asset_name: ${{ env.MACOS_X86_ZIP_NAME }}
           asset_content_type: application/octet-stream
+
       - name: Upload DMG Release Asset
         uses: actions/upload-release-asset@v1
         env:
@@ -258,6 +259,10 @@ jobs:
         run: |
           flutter config --enable-linux-desktop
           cargo make --env APP_VERSION=${{ github.ref_name }} --profile production-linux-x86_64 appflowy
+
+      - name: Archive AppFlowy
+        working-directory: ${{ env.MACOS_APP_RELEASE_PATH }}
+        run: zip --symlinks -qr ${{ env.LINUX_ZIP_NAME }} AppFlowy.app
 
       - name: Configuring Linux Package
         working-directory: frontend
