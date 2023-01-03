@@ -5,59 +5,75 @@ on:
     tags:
       - '*'
 
+env:
+  FLUTTER_VERSION: "3.0.5"
+  RELEASE_NOTES_PATH: /tmp/release_notes
+
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    env:
-      RELEASE_NOTES_PATH: /tmp/release_notes
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  outputs:
+    upload_url: ${{ steps.create_release.outputs.upload_url }}
+  steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
 
-      - name: Build release notes
-        run: |
-          touch ${{ env.RELEASE_NOTES_PATH }}
-          cat CHANGELOG.md | sed -e '/./{H;$!d;}' -e "x;/##\ Version\ ${{ github.ref_name }}/"'!d;' >> ${{ env.RELEASE_NOTES_PATH }}
+    - name: Build release notes
+      run: |
+        touch ${{ env.RELEASE_NOTES_PATH }}
+        cat CHANGELOG.md | sed -e '/./{H;$!d;}' -e "x;/##\ Version\ ${{ github.ref_name }}/"'!d;' >> ${{ env.RELEASE_NOTES_PATH }}
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: v${{ github.ref }}
-          body_path: ${{ env.RELEASE_NOTES_PATH }}
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: v${{ github.ref }}
+        body_path: ${{ env.RELEASE_NOTES_PATH }}
 
-  build-windows-x86_64:
-    runs-on: windows-latest
+  build-for-windows:
+    name: ${{ matrix.job.target }} (${{ matrix.job.os }})
     needs: create-release
     env:
       WINDOWS_APP_RELEASE_PATH: frontend\app_flowy\product\${{ github.ref_name }}\windows
       WINDOWS_ZIP_NAME: AppFlowy-windows-x86_64.zip
       WINDOWS_INSTALLER_NAME: AppFlowy-${{ github.ref_name }}-windows-x86_64
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { target: x86_64-pc-windows-msvc, os: windows-2019 }
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Setup environment - Rust and Cargo
+      - name: Install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: 'stable-2022-04-07'
+          target: ${{ matrix.job.target }}
+          override: true
+          components: rustfmt
+          profile: minimal # minimal component installation (ie, no documentation)
 
-      - name: Setup environment - Flutter
-        uses: subosito/flutter-action@v2
+      - uses: Swatinem/rust-cache@v2
         with:
-          channel: 'stable'
-          flutter-version: '3.3.9'
+          prefix-key: ${{ matrix.job.os }}
 
       - name: Pre build
-        working-directory: frontend
-        run: |
-          cargo install --force cargo-make
-          cargo install --force duckscript_cli
+          working-directory: frontend
+          run: |
+            cargo install --force cargo-make
+            cargo install --force duckscript_cli
+
 
       - name: Build Windows app
         working-directory: frontend
@@ -69,7 +85,7 @@ jobs:
         with:
           files: ${{ env.WINDOWS_APP_RELEASE_PATH }}\
           dest: ${{ env.WINDOWS_APP_RELEASE_PATH }}\${{ env.WINDOWS_ZIP_NAME }}
-      
+
       - name: Copy installer config & icon file
         working-directory: frontend
         run: |
@@ -101,3 +117,4 @@ jobs:
           asset_path: ${{ env.WINDOWS_APP_RELEASE_PATH }}\Output\${{ env.WINDOWS_INSTALLER_NAME }}.exe
           asset_name: ${{ env.WINDOWS_INSTALLER_NAME }}.exe
           asset_content_type: application/octet-stream
+
