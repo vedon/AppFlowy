@@ -102,6 +102,11 @@ jobs:
         run: flutter analyze
 
       - name: Run Flutter unit tests
-        working-directory: frontend/app_flowy
+        working-directory: frontend
         run: |
-          cargo make dart_unit_test
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            cargo make dart_unit_test
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            cargo make dart_unit_test
+          fi
+        shell: bash
