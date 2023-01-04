@@ -102,6 +102,6 @@ jobs:
         run: flutter analyze
 
       - name: Run Flutter unit tests
-        working-directory: frontend/app_flowy
+        working-directory: frontend
         run: |
           cargo make dart_unit_test
