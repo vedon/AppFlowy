@@ -98,7 +98,7 @@ impl GridRevisionEditor {
             view_manager,
             cell_data_cache,
         });
-
+// test
         Ok(editor)
     }
 
@@ -108,6 +108,7 @@ impl GridRevisionEditor {
         self.rev_manager.generate_snapshot().await;
         self.rev_manager.close().await;
         self.view_manager.close(&self.grid_id).await;
+        //
     }
 
     /// Save the type-option data to disk and send a `GridDartNotification::DidUpdateField` notification
