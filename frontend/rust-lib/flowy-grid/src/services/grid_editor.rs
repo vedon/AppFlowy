@@ -98,7 +98,6 @@ impl GridRevisionEditor {
             view_manager,
             cell_data_cache,
         });
-
         Ok(editor)
     }
 
@@ -107,6 +106,7 @@ impl GridRevisionEditor {
         self.block_manager.close().await;
         self.rev_manager.generate_snapshot().await;
         self.rev_manager.close().await;
+        // test
         self.view_manager.close(&self.grid_id).await;
     }
 
