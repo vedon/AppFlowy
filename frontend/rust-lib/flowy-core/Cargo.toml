@@ -28,6 +28,9 @@ flowy-http-model = { path = "../../../shared-lib/flowy-http-model" }
 lib-ws = { path = "../../../shared-lib/lib-ws" }
 lib-infra = { path = "../../../shared-lib/lib-infra" }
 
+openssl = { version = "0.10.38", optional = true, features = ["vendored"] }
+openssl-sys = { version = "0.9.69", optional = true, features = ["vendored"] }
+
 [features]
 http_sync = ["flowy-folder/cloud_sync", "flowy-document/cloud_sync"]
 native_sync = ["flowy-folder/cloud_sync", "flowy-document/cloud_sync"]
@@ -46,4 +49,4 @@ rev-sqlite = [
     "flowy-grid/rev-sqlite",
     "flowy-document/rev-sqlite",
 ]
-openssl_vendored = ["flowy-database/openssl_vendored"]
+openssl_vendored = ["flowy-database/openssl_vendored", "openssl", "openssl-sys"]

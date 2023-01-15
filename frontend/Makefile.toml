@@ -142,6 +142,7 @@ FLUTTER_OUTPUT_DIR = "Release"
 LIB_EXT = "so"
 LINUX_ARCH = "arm64"
 APP_ENVIRONMENT = "production"
+FEATURES = "flutter,openssl_vendore"
 
 [tasks.echo_env]
 script = ['''
