@@ -143,7 +143,7 @@ FLUTTER_OUTPUT_DIR = "Release"
 LIB_EXT = "so"
 LINUX_ARCH = "arm64"
 APP_ENVIRONMENT = "production"
-FLUTTER_DESKTOP_FEATURES = "flutter,rev-sqlite,openssl_vendored"
+FLUTTER_DESKTOP_FEATURES = "flutter,rev-sqlite"
 
 [tasks.echo_env]
 script = ['''
